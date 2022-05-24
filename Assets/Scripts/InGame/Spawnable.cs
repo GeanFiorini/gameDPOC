@@ -4,7 +4,10 @@ public class Spawnable : MonoBehaviour
 {
     public enum SpawnableType
     {
-        RiskFactor
+        RiskFactor,
+        Coin,
+        Box,
+        Inhaler
     }
 
     [SerializeField] private SpawnableType _type;
@@ -29,6 +32,24 @@ public class Spawnable : MonoBehaviour
         if (this._type == SpawnableType.RiskFactor)
         {
             playerStats.OnPlayerHitRiskFactor(this._mmrcIncreaseWeight);
+        }
+
+        else if (this._type == SpawnableType.Coin)
+        {
+            playerStats._coins += 1;
+            _walkController._coinsText.SetText(playerStats._coins.ToString());
+        }
+
+        else if (this._type == SpawnableType.Inhaler)
+        {
+            playerStats.OnPlayerHitInhaler(0.2f);
+        }
+
+        else if (this._type == SpawnableType.Box)
+        {
+            // pausar o jogo
+            // mostrar pergunta
+            // só depois de responder continuar
         }
 
         Destroy(this.gameObject);

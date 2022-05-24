@@ -11,6 +11,7 @@ public class PlayerStats : MonoBehaviour
     private float _mmrc;
     private Player _player;
     private WalkController _walkController;
+    public int _coins;
 
     public float Health => this._health;
     public float MMRC => this._mmrc;
@@ -20,6 +21,7 @@ public class PlayerStats : MonoBehaviour
         this._player = GetComponent<Player>();
         this._health = 1f;
         this._walkController = FindObjectOfType<WalkController>();
+        this._coins = 0;
 
         UpdateMMRCBar();
         UpdateHealthBar();
@@ -34,11 +36,23 @@ public class PlayerStats : MonoBehaviour
         this._health = Mathf.Clamp01(this._health);
         UpdateHealthBar();
 
-        if (this._health <= 0f)
+        if (this._mmrc >= 4f)
         {
             this._walkController.OnPlayerDeath();
             this._player.OnDeath();
         }
+    }
+
+    public void OnPlayerHitInhaler(float damage)
+    {
+        
+        this._mmrc -= damage;
+        this._mmrc = Mathf.Clamp(_mmrc, 0, 4);
+        UpdateMMRCBar();
+
+        this._health -= this._walkController.HealthDecreaseCurve.Evaluate(Mathf.Clamp01(this._mmrc / 4f));
+        this._health = Mathf.Clamp01(this._health);
+        UpdateHealthBar();
     }
 
     private void UpdateHealthBar()

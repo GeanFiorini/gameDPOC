@@ -133,19 +133,22 @@ public class Player : MonoBehaviour
 
     private void HandleSidewaysMoves()
     {
-        if (InputController.Instance.GoingLeft())
+        if (!_walkController.IsGamePaused)
         {
-            this._currentTrack--;
-        }
-        else if (InputController.Instance.GoingRight())
-        {
-            this._currentTrack++;
-        }
-        this._currentTrack = Mathf.Clamp(this._currentTrack, -1, 1);
+            if (InputController.Instance.GoingLeft())
+            {
+                this._currentTrack--;
+            }
+            else if (InputController.Instance.GoingRight())
+            {
+                this._currentTrack++;
+            }
+            this._currentTrack = Mathf.Clamp(this._currentTrack, -1, 1);
 
-        float oldX = this.transform.position.x;
-        float newX = this._currentTrack * this._trackStrides;
-        this.transform.position = new Vector3(Mathf.Lerp(oldX, newX, Time.deltaTime * 7.5f), this.transform.position.y, this.transform.position.z);
+            float oldX = this.transform.position.x;
+            float newX = this._currentTrack * this._trackStrides;
+            this.transform.position = new Vector3(Mathf.Lerp(oldX, newX, Time.deltaTime * 7.5f), this.transform.position.y, this.transform.position.z);
+        }
     }
 
     private bool IsGrounded()

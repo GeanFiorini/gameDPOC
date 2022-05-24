@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class WalkController : MonoBehaviour
 {
+    [SerializeField] public TextMeshProUGUI _coinsText;
+
     [Header("Difficulty Controls")]
     [SerializeField] private AnimationCurve _mmrcToSpeedCurve;
     [SerializeField] private AnimationCurve _mmrcToSpawnableChanceCurve;
@@ -53,7 +56,7 @@ public class WalkController : MonoBehaviour
         this._player = FindObjectOfType<Player>();
         this._playerStats = FindObjectOfType<PlayerStats>();
 
-        UpdateDifficultyBasedOnMMRC();
+        UpdateDifficultyBasedOnDistance();
 
         foreach (SceneryPart part in this._initialParts)
         {
@@ -98,7 +101,7 @@ public class WalkController : MonoBehaviour
                 this._lastScoreDist += 1f;
             }
 
-            UpdateDifficultyBasedOnMMRC();
+            UpdateDifficultyBasedOnDistance();
         }
     }
 
@@ -155,12 +158,12 @@ public class WalkController : MonoBehaviour
         this._firstQuiz.SetActive(true);
     }
 
-    private void UpdateDifficultyBasedOnMMRC()
+    private void UpdateDifficultyBasedOnDistance()
     {
         if (this._isGameOver || this._isPaused) return;
 
-        this._currentSpeed = this._mmrcToSpeedCurve.Evaluate(this._playerStats.MMRC);
-        this._spawnableChance = this._mmrcToSpawnableChanceCurve.Evaluate(this._playerStats.MMRC);
+        this._currentSpeed = this._mmrcToSpeedCurve.Evaluate(this._totalDistanceWalked/1000);
+        this._spawnableChance = this._mmrcToSpawnableChanceCurve.Evaluate(this._totalDistanceWalked/1000);
     }
 
     // Utilizado para estimar a distancia correta ao criar a linha de chegada

@@ -9701,7 +9701,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _mmrcIncreaseFactor: 0.5
-  _minimumDistanceToWalk: 500
+  _minimumDistanceToWalk: 3.402823e+38
   _initialParts:
   - {fileID: 701773433}
   - {fileID: 1198344516}
