@@ -15,11 +15,13 @@ public class Spawnable : MonoBehaviour
 
     private WalkController _walkController;
     private ParticleSystem[] _particleSystems; // Utilizado para controlar a velocidade das particulas, já que é o cenário que se move
+    private Canvas _canva;
 
     private void Start()
     {
         this._walkController = FindObjectOfType<WalkController>();
         this._particleSystems = GetComponentsInChildren<ParticleSystem>();
+        this._canva = FindObjectOfType<Canvas>();
     }
 
     private void Update()
@@ -47,9 +49,8 @@ public class Spawnable : MonoBehaviour
 
         else if (this._type == SpawnableType.Box)
         {
-            // pausar o jogo
-            // mostrar pergunta
-            // só depois de responder continuar
+            _walkController.PauseWalk();
+            Instantiate(_walkController._questions[Random.Range(0, _walkController._questions.Length)], _walkController._questions_position.transform);
         }
 
         Destroy(this.gameObject);

@@ -51,6 +51,10 @@ public class WalkController : MonoBehaviour
     public float SpawnableChance => this._spawnableChance;
     public bool IsGamePaused => this._isPaused;
 
+    public GameObject[] _questions;
+
+    public GameObject _questions_position;
+
     private void Start()
     {
         this._player = FindObjectOfType<Player>();
@@ -108,7 +112,7 @@ public class WalkController : MonoBehaviour
     public void PauseWalk()
     {
         this._lastSavedSpeed = this._currentSpeed;
-        this._currentSpeed = 0f;
+        this._currentSpeed = 0.0f;
         this._isPaused = true;
     }
 
@@ -151,9 +155,9 @@ public class WalkController : MonoBehaviour
         this._loseScreen.SetActive(true);
     }
 
-    private IEnumerator StartQuiz()
+    public IEnumerator StartQuiz()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(0.1f);
 
         this._firstQuiz.SetActive(true);
     }

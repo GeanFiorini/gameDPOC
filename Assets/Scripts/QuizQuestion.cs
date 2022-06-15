@@ -45,6 +45,7 @@ public class QuizQuestion : MonoBehaviour
     private Color _startColor;
     private bool _isOver;
     private QuizOption[] _options;
+    public Button skipButton;
 
     private void Start()
     {
@@ -62,6 +63,16 @@ public class QuizQuestion : MonoBehaviour
         }
 
         this._startColor = this._options[0].image.color;
+        if(FindObjectOfType<PlayerStats>()._coins < 10)
+        {
+            skipButton.interactable = false;
+        }
+    }
+
+    public void DeleteQuestion()
+    {
+        Destroy(gameObject);
+        FindObjectOfType<WalkController>().ResumeWalk();
     }
 
     public void OptionClicked(int id)
@@ -108,6 +119,7 @@ public class QuizQuestion : MonoBehaviour
                 else
                 {
                     SwitchOptionState(option, QuizOptionState.INCORRECT);
+                    FindObjectOfType<PlayerStats>().OnPlayerHitRiskFactor(2f);
                 }
             }
         });
@@ -115,27 +127,21 @@ public class QuizQuestion : MonoBehaviour
         int numCorrect = this._options.Count(option => option.state == QuizOptionState.CORRECT);
         int numUnselected = this._options.Count(option => option.state == QuizOptionState.NONE);
 
-        if (numCorrect == this._correctAnswersIds.Length || numUnselected == 1)
-        {   // Finalizou o quiz
-            if (numUnselected == 1)
-            {   // Utilizou uma tentativa automática (já que só tem uma opção sobrando)
-                this._attempts++;
-            }
-
-            this._isOver = true;
-            this._options.For((i, option) =>
-            {   // Revela o resto das opções
-                if (option.state == QuizOptionState.NONE)
-                {
-                    SwitchOptionState(option, this._correctAnswersIds.Contains(i) ? QuizOptionState.CORRECT : QuizOptionState.INCORRECT);
-                }
-            });
-            StartCoroutine(OnFinishQuiz());
-        }
-        else
-        {
+        // Finalizou o quiz
+        if (numUnselected == 1)
+        {   // Utilizou uma tentativa automática (já que só tem uma opção sobrando)
             this._attempts++;
         }
+
+        this._isOver = true;
+        this._options.For((i, option) =>
+        {   // Revela o resto das opções
+            if (option.state == QuizOptionState.NONE)
+            {
+                SwitchOptionState(option, this._correctAnswersIds.Contains(i) ? QuizOptionState.CORRECT : QuizOptionState.INCORRECT);
+            }
+        });
+        StartCoroutine(OnFinishQuiz());
 
         this._confirmButton.interactable = false;
     }
@@ -147,6 +153,18 @@ public class QuizQuestion : MonoBehaviour
                             (newState == QuizOptionState.CORRECT ? this._right : this._wrong));
         option.state = newState;
         option.button.interactable = newState != QuizOptionState.CORRECT && newState != QuizOptionState.INCORRECT;
+    }
+
+    public void Skip()
+    {
+        PlayerStats stats = FindObjectOfType<PlayerStats>();
+        if (stats._coins >= 10)
+        {
+            stats._coins -= 10;
+            FindObjectOfType<WalkController>()._coinsText.SetText(stats._coins.ToString());
+            this.gameObject.SetActive(false);
+            this._onFinish?.Invoke();
+        }
     }
 
     private IEnumerator OnFinishQuiz()
